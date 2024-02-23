@@ -1,6 +1,6 @@
 FROM alpine:3.17 as xformers
 RUN apk add --no-cache aria2
-RUN aria2c -x 5 --dir / --out wheel.whl 'https://github.com/AbdBarho/stable-diffusion-webui-docker/releases/download/6.0.0/xformers-0.0.21.dev544-cp310-cp310-manylinux2014_x86_64-pytorch201.whl'
+RUN aria2c -x 5 --dir / --out wheel.whl 'https://mirror.ghproxy.com/https://github.com/AbdBarho/stable-diffusion-webui-docker/releases/download/6.0.0/xformers-0.0.21.dev544-cp310-cp310-manylinux2014_x86_64-pytorch201.whl'
 
 
 FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
@@ -18,11 +18,12 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 
 ENV ROOT=/InvokeAI
-RUN git clone https://github.com/invoke-ai/InvokeAI.git ${ROOT}
+RUN git clone https://mirror.ghproxy.com/https://github.com/invoke-ai/InvokeAI.git ${ROOT}
 WORKDIR ${ROOT}
 
 RUN --mount=type=cache,target=/root/.cache/pip \
   git reset --hard f3b2e02921927d9317255b1c3811f47bd40a2bf9 && \
+  pip config set global.index-url https://mirrors.aliyun.com/pypi/simple && \
   pip install -e .
 
 

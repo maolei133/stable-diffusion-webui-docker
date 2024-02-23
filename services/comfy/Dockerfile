@@ -6,10 +6,11 @@ RUN apt-get update && apt-get install -y git && apt-get clean
 
 ENV ROOT=/stable-diffusion
 RUN --mount=type=cache,target=/root/.cache/pip \
-  git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
+  git clone https://mirror.ghproxy.com/https://github.com/comfyanonymous/ComfyUI.git ${ROOT} && \
   cd ${ROOT} && \
   git checkout master && \
   git reset --hard d1f3637a5a944d0607b899babd8ff11d87100503 && \
+  pip config set global.index-url https://mirrors.aliyun.com/pypi/simple && \
   pip install -r requirements.txt
 
 WORKDIR ${ROOT}
@@ -19,4 +20,4 @@ RUN chmod u+x /docker/entrypoint.sh && cp /docker/extra_model_paths.yaml ${ROOT}
 ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
 EXPOSE 7860
 ENTRYPOINT ["/docker/entrypoint.sh"]
-CMD python -u main.py --listen --port 7860 ${CLI_ARGS}
+CMD HF_ENDPOINT=https://hf-mirror.com python -u main.py --listen --port 7860 ${CLI_ARGS}
